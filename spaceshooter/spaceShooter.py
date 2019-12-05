@@ -380,7 +380,7 @@ class Mob(pygame.sprite.Sprite):
 class Pow(pygame.sprite.Sprite):
     def __init__(self, center):
         pygame.sprite.Sprite.__init__(self)
-        self.type = random.choice(['shield', 'gun', 'bomb'])
+        self.type = random.choice(['shield', 'gun', 'bomb', 'heart']) #폭탄, 목숨 아이템 추가
         self.image = powerup_images[self.type]
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
@@ -510,7 +510,8 @@ powerup_images['shield'] = pygame.image.load(path.join(img_dir, 'shield_gold.png
 powerup_images['gun'] = pygame.image.load(path.join(img_dir, 'bolt_gold.png')).convert()
 powerup_images['bomb'] = pygame.image.load(path.join(img_dir, 'bomb_gold.png')).convert()
 #bomb 이미지 설정
-
+powerup_images['heart'] = pygame.image.load(path.join(img_dir, 'heart.png')).convert()
+#heart(목숨) 아이템 이미지 설정
 
 ###################################################
 
@@ -605,7 +606,7 @@ while running:
         # mobs.add(m)
         expl = Explosion(hit.rect.center, 'lg')
         all_sprites.add(expl)
-        if random.random() > 0.9:
+        if random.random() > 0.95:
             pow = Pow(hit.rect.center)
             all_sprites.add(pow)
             powerups.add(pow)
@@ -659,7 +660,10 @@ while running:
             player.bomb_count += 1 #폭탄 먹었을 때 폭탄 갯수 +1
             if player.bomb_count >= 3:
                 player.bomb_count = 3
-            
+        if hit.type == 'heart': #하트 추가, 갯수 제한
+            player.lives += 1
+            if player.lives >= 3:
+                player.lives = 3
             
 
     ## if player died and the explosion has finished, end game
