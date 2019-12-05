@@ -173,6 +173,7 @@ class Player(pygame.sprite.Sprite):
         self.power = 1
  #       self.power_timer = pygame.time.get_ticks()
         self.power_count = 30
+        self.bomb_count = 1
 
     def update(self):
         ## time out for powerups
@@ -207,6 +208,9 @@ class Player(pygame.sprite.Sprite):
         #Fire weapons by holding spacebar
         if keystate[pygame.K_SPACE]:
             self.shoot()
+        if keystate[pygame.K_z]:
+            self.bomb_shoot()
+        #z누르면 폭탄나감
 
         ## check for the borders at the left and right
         if self.rect.right > WIDTH:
@@ -220,6 +224,66 @@ class Player(pygame.sprite.Sprite):
         self.rect.x += self.speedx
         self.rect.y += self.speedy
 
+    #폭탄 발사 함수 생성
+    def bomb_shoot(self):
+        now = pygame.time.get_ticks()
+        if self.bomb_count >= 1:
+            if now - self.last_shot > self.shoot_delay:
+                self.last_shot = now
+                bomb1 = Bomb(self.rect.centerx-160, self.rect.centery+80)
+                bomb2 = Bomb(self.rect.centerx-140, self.rect.centery+70)
+                bomb3 = Bomb(self.rect.centerx-120, self.rect.centery+60)
+                bomb4 = Bomb(self.rect.centerx-100, self.rect.centery+50)
+                bomb5 = Bomb(self.rect.centerx-80, self.rect.centery+40)
+                bomb6 = Bomb(self.rect.centerx-60, self.rect.centery+30)
+                bomb7 = Bomb(self.rect.centerx-40, self.rect.centery+20)
+                bomb8 = Bomb(self.rect.centerx-20, self.rect.centery+10)
+                bomb9 = Bomb(self.rect.centerx, self.rect.top)#센터
+                bomb10 = Bomb(self.rect.centerx+20, self.rect.centery+10)
+                bomb11 = Bomb(self.rect.centerx+40, self.rect.centery+20)
+                bomb12 = Bomb(self.rect.centerx+60, self.rect.centery+30)
+                bomb13 = Bomb(self.rect.centerx+80, self.rect.centery+40)
+                bomb14 = Bomb(self.rect.centerx+100, self.rect.centery+50)
+                bomb15 = Bomb(self.rect.centerx+120, self.rect.centery+60)
+                bomb16 = Bomb(self.rect.centerx+140, self.rect.centery+70)
+                bomb17 = Bomb(self.rect.centerx+160, self.rect.centery+80)           
+                all_sprites.add(bomb1)
+                all_sprites.add(bomb2)
+                all_sprites.add(bomb3)
+                all_sprites.add(bomb4)
+                all_sprites.add(bomb5)
+                all_sprites.add(bomb6)
+                all_sprites.add(bomb7)
+                all_sprites.add(bomb8)
+                all_sprites.add(bomb9)
+                all_sprites.add(bomb10)
+                all_sprites.add(bomb11)
+                all_sprites.add(bomb12)
+                all_sprites.add(bomb13)
+                all_sprites.add(bomb14)
+                all_sprites.add(bomb15)
+                all_sprites.add(bomb16)
+                all_sprites.add(bomb17)
+                bombs.add(bomb1)
+                bombs.add(bomb2)
+                bombs.add(bomb3)
+                bombs.add(bomb4)
+                bombs.add(bomb5)
+                bombs.add(bomb6)
+                bombs.add(bomb7)
+                bombs.add(bomb8)
+                bombs.add(bomb9)
+                bombs.add(bomb10)
+                bombs.add(bomb11)
+                bombs.add(bomb12)
+                bombs.add(bomb13)
+                bombs.add(bomb14)
+                bombs.add(bomb15)
+                bombs.add(bomb16)
+                bombs.add(bomb17)
+                shooting_sound.play()
+                self.bomb_count -= 1
+            
     def shoot(self):
         ## to tell the bullet where to spawn
         now = pygame.time.get_ticks()
@@ -265,9 +329,10 @@ class Player(pygame.sprite.Sprite):
         self.hide_timer = pygame.time.get_ticks()
         self.rect.center = (WIDTH / 2, HEIGHT + 200)
         self.power = 1              #죽었을 때 파워 초기화
-        self.power_count = 30       #죽었을 때 파워 카운트 초기
+        self.power_count = 30       #죽었을 때 파워 카운트(총알 갯수) 초기화
+        self.bomb_count = 1         #죽었을 때 폭탄 갯수 초기화
 
-
+    
 # defines the enemies
 class Mob(pygame.sprite.Sprite):
     def __init__(self):
@@ -315,7 +380,7 @@ class Mob(pygame.sprite.Sprite):
 class Pow(pygame.sprite.Sprite):
     def __init__(self, center):
         pygame.sprite.Sprite.__init__(self)
-        self.type = random.choice(['shield', 'gun'])
+        self.type = random.choice(['shield', 'gun', 'bomb', 'heart']) #폭탄, 목숨 아이템 추가
         self.image = powerup_images[self.type]
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
@@ -330,6 +395,23 @@ class Pow(pygame.sprite.Sprite):
         if self.rect.top > HEIGHT:
             self.kill()
 
+#폭탄을 위한 Bomb 클래스 생성
+class Bomb(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = bomb_img
+        self.image.set_colorkey(BLACK)
+        self.rect = self.image.get_rect()
+        self.rect.bottom = y
+        self.rect.centerx = x
+        self.speedy = -10
+
+    def update(self):
+
+        self.rect.y += self.speedy
+
+        if self.rect.bottom < 0:
+            self.kill()
             
 
 ## defines the sprite for bullets
@@ -384,6 +466,7 @@ player_img = pygame.image.load(path.join(img_dir, 'playerShip1_orange.png')).con
 player_mini_img = pygame.transform.scale(player_img, (25, 19))
 player_mini_img.set_colorkey(BLACK)
 bullet_img = pygame.image.load(path.join(img_dir, 'laserRed16.png')).convert()
+bomb_img = pygame.image.load(path.join(img_dir, 'spaceMissiles_006.png')).convert()
 missile_img = pygame.image.load(path.join(img_dir, 'missile.png')).convert_alpha()
 # meteor_img = pygame.image.load(path.join(img_dir, 'meteorBrown_med1.png')).convert()
 meteor_images = []
@@ -425,7 +508,10 @@ for i in range(9):
 powerup_images = {}
 powerup_images['shield'] = pygame.image.load(path.join(img_dir, 'shield_gold.png')).convert()
 powerup_images['gun'] = pygame.image.load(path.join(img_dir, 'bolt_gold.png')).convert()
-
+powerup_images['bomb'] = pygame.image.load(path.join(img_dir, 'bomb_gold.png')).convert()
+#bomb 이미지 설정
+powerup_images['heart'] = pygame.image.load(path.join(img_dir, 'heart.png')).convert()
+#heart(목숨) 아이템 이미지 설정
 
 ###################################################
 
@@ -482,6 +568,7 @@ while running:
         ## group for bullets
         bullets = pygame.sprite.Group()
         powerups = pygame.sprite.Group()
+        bombs = pygame.sprite.Group() #bombs 라는 그룹 생성
 
         #### Score board variable
         score = 0
@@ -519,7 +606,7 @@ while running:
         # mobs.add(m)
         expl = Explosion(hit.rect.center, 'lg')
         all_sprites.add(expl)
-        if random.random() > 0.9:
+        if random.random() > 0.95:
             pow = Pow(hit.rect.center)
             all_sprites.add(pow)
             powerups.add(pow)
@@ -527,6 +614,22 @@ while running:
 
     ## ^^ the above loop will create the amount of mob objects which were killed spawn again
     #########################
+
+#폭탄과 몬스터가 충돌 시 코드
+    b_hits = pygame.sprite.groupcollide(mobs, bombs, True, True)
+    for hit in b_hits:
+        score += 50 - hit.radius         ## give different scores for hitting big and small metoers
+        random.choice(expl_sounds).play()
+        # m = Mob()
+        # all_sprites.add(m)
+        # mobs.add(m)
+        expl = Explosion(hit.rect.center, 'lg')
+        all_sprites.add(expl)
+        if random.random() > 0.95:
+            pow = Pow(hit.rect.center)
+            all_sprites.add(pow)
+            powerups.add(pow)
+        newmob()    
 
     ## check if the player collides with the mob
     hits = pygame.sprite.spritecollide(player, mobs, True, pygame.sprite.collide_circle)        ## gives back a list, True makes the mob element disappear
@@ -553,6 +656,15 @@ while running:
                 player.shield = 100
         if hit.type == 'gun':
             player.powerup()
+        if hit.type == 'bomb':
+            player.bomb_count += 1 #폭탄 먹었을 때 폭탄 갯수 +1
+            if player.bomb_count >= 3:
+                player.bomb_count = 3
+        if hit.type == 'heart': #하트 추가, 갯수 제한
+            player.lives += 1
+            if player.lives >= 3:
+                player.lives = 3
+            
 
     ## if player died and the explosion has finished, end game
     if player.lives == 0 and not death_explosion.alive():
@@ -572,6 +684,9 @@ while running:
     # Draw lives
     draw_lives(screen, WIDTH - 100, 5, player.lives, player_mini_img)
 
+    # Draw bombs 폭탄 갯수 화면에 표시
+    draw_lives(screen, WIDTH - 100, 25, player.bomb_count, powerup_images['bomb'])
+    
     ## Done after drawing everything to the screen
     pygame.display.flip()       
 
