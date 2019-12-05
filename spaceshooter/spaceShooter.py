@@ -329,9 +329,10 @@ class Player(pygame.sprite.Sprite):
         self.hide_timer = pygame.time.get_ticks()
         self.rect.center = (WIDTH / 2, HEIGHT + 200)
         self.power = 1              #죽었을 때 파워 초기화
-        self.power_count = 30       #죽었을 때 파워 카운트 초기
+        self.power_count = 30       #죽었을 때 파워 카운트(총알 갯수) 초기화
+        self.bomb_count = 1         #죽었을 때 폭탄 갯수 초기화
 
-
+    
 # defines the enemies
 class Mob(pygame.sprite.Sprite):
     def __init__(self):
@@ -656,6 +657,10 @@ while running:
             player.powerup()
         if hit.type == 'bomb':
             player.bomb_count += 1 #폭탄 먹었을 때 폭탄 갯수 +1
+            if player.bomb_count >= 3:
+                player.bomb_count = 3
+            
+            
 
     ## if player died and the explosion has finished, end game
     if player.lives == 0 and not death_explosion.alive():
@@ -675,6 +680,9 @@ while running:
     # Draw lives
     draw_lives(screen, WIDTH - 100, 5, player.lives, player_mini_img)
 
+    # Draw bombs 폭탄 갯수 화면에 표시
+    draw_lives(screen, WIDTH - 100, 25, player.bomb_count, powerup_images['bomb'])
+    
     ## Done after drawing everything to the screen
     pygame.display.flip()       
 
