@@ -71,24 +71,29 @@ def main_menu():
         ev = pygame.event.poll()
         if ev.type == pygame.KEYDOWN:
             if ev.key == pygame.K_RETURN:
-                break
+                #pygame.mixer.music.stop()
+                ready = pygame.mixer.Sound(path.join(sound_folder, 'getready.ogg'))
+                ready.play()
+                screen.fill(BLACK)
+                draw_text(screen, "GET READY!", 40, WIDTH/2, HEIGHT/2)
+                pygame.display.update()
+                break;
             elif ev.key == pygame.K_q:
                 pygame.quit()
                 quit()
+            # 스코어 추가
+            elif ev.key == pygame.K_s: 
+                draw_text(screen, "Top Ranking", 40, WIDTH/2, HEIGHT/2)
         elif ev.type == pygame.QUIT:
                 pygame.quit()
                 quit()
         else:
             draw_text(screen, "Press [ENTER] To Begin", 30, WIDTH/2, HEIGHT/2)
             draw_text(screen, "or [Q] To Quit", 30, WIDTH/2, (HEIGHT/2)+40)
+            draw_text(screen, "or [S] To Score", 30, WIDTH/2, (HEIGHT/2)+80)
             pygame.display.update()
 
-    #pygame.mixer.music.stop()
-    ready = pygame.mixer.Sound(path.join(sound_folder, 'getready.ogg'))
-    ready.play()
-    screen.fill(BLACK)
-    draw_text(screen, "GET READY!", 40, WIDTH/2, HEIGHT/2)
-    pygame.display.update()
+    
 
 
 def draw_text(surf, text, size, x, y):
@@ -173,7 +178,7 @@ class Player(pygame.sprite.Sprite):
         self.hidden = False
         self.hide_timer = pygame.time.get_ticks()
         self.power = 1
- #       self.power_timer = pygame.time.get_ticks()
+#       self.power_timer = pygame.time.get_ticks()
         self.power_count = 30
         self.bomb_count = 1
 
@@ -198,12 +203,6 @@ class Player(pygame.sprite.Sprite):
 
         ## will give back a list of the keys which happen to be pressed down at that moment
         keystate = pygame.key.get_pressed()
-        # 움직임을 제어하는 리스트
-        direction = {pygame.K_UP: (0, -5), 
-                    pygame.K_DOWN: (0, +5), 
-                    pygame.K_RIGHT: (5, 0), 
-                    pygame.K_LEFT: (-5, 0)}
-
         ## 대각선으로 이동 가능하게 하는 기능
         if (keystate[pygame.K_UP] and keystate[pygame.K_RIGHT]):
             self.speedx = 5
@@ -641,7 +640,7 @@ while running:
     ## now as we delete the mob element when we hit one with a bullet, we need to respawn them again
     ## as there will be no mob_elements left out
     for hit in hits:
-        score += 50 - hit.radius  # give different scores for hitting big and small metoers
+        score += 100 - hit.radius  # give different scores for hitting big and small metoers
         random.choice(expl_sounds).play()
         # m = Mob()
         # all_sprites.add(m)
