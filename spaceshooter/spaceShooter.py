@@ -54,6 +54,16 @@ clock = pygame.time.Clock()  # For syncing the FPS
 
 font_name = pygame.font.match_font('arial')
 
+#wave(stage) 함수
+def count_wave(wavecounter):
+    if wavecounter >= 0 and wavecounter <=200:
+        return 1
+    elif wavecounter > 200 and wavecounter <=400:
+        return 2
+    elif wavecounter > 400 and wavecounter <= 600:
+        return 3
+    elif wavecounter > 600 :
+        return 4
 
 def main_menu():
     global screen
@@ -489,6 +499,19 @@ class Missile(pygame.sprite.Sprite):
 
 ###################################################
 ## Load all game images
+#배경화면 이미지 리스트로 저장
+starfield=['starfield1.png', 'starfield2.png', 'starfield3.png', 'starfield4.png']
+#스테이지 당 배경화면 설정
+def setbackground(wave):
+    if wave == 1:
+        background = pygame.image.load(path.join(img_dir, starfield[0])).convert()
+    elif wave == 2:
+        background = pygame.image.load(path.join(img_dir, starfield[1])).convert()
+    elif wave == 3:
+        background = pygame.image.load(path.join(img_dir, starfield[2])).convert()
+    elif wave == 4:
+        background = pygame.image.load(path.join(img_dir, starfield[3])).convert()
+    return background
 
 background = pygame.image.load(path.join(img_dir, 'starfield.png')).convert()
 background_rect = background.get_rect()
@@ -594,6 +617,12 @@ while running:
 
         menu_display = False
 
+        bossStage = False
+        wavecounter = 0 #처음에 몹 죽인 횟수 0으로 count
+        wave = 1 #stage(wave) = 1
+        background = setbackground(wave)
+        background_rect = setbackground(wave).get_rect() 
+        
         ## group all the sprites together for ease of update
         all_sprites = pygame.sprite.Group()
         player = Player()
@@ -641,7 +670,12 @@ while running:
     ## now as we delete the mob element when we hit one with a bullet, we need to respawn them again
     ## as there will be no mob_elements left out
     for hit in hits:
-        score += 50 - hit.radius  # give different scores for hitting big and small metoers
+        wavecounter += 1
+        wave = count_wave(wavecounter)
+        if wavecounter %200 <=10:
+            background = setbackground(wave)
+            background_rect = setbackground(wave).get_rect() 
+        score += 50 - hit.radius         ## give different scores for hitting big and small metoers
         random.choice(expl_sounds).play()
         # m = Mob()
         # all_sprites.add(m)
@@ -660,7 +694,12 @@ while running:
 #폭탄과 몬스터가 충돌 시 코드
     b_hits = pygame.sprite.groupcollide(mobs, bombs, True, True)
     for hit in b_hits:
-        score += 50 - hit.radius  # give different scores for hitting big and small metoers
+        wavecounter += 1
+        wave = count_wave(wavecounter)
+        if wavecounter %200 <=10:
+            background = setbackground(wave)
+            background_rect = setbackground(wave).get_rect() 
+        score += 50 - hit.radius         ## give different scores for hitting big and small metoers
         random.choice(expl_sounds).play()
         # m = Mob()
         # all_sprites.add(m)
@@ -724,7 +763,8 @@ while running:
     # 10px down from the screen
     draw_text(screen, str(score), 18, WIDTH / 2, 10)
     draw_shield_bar(screen, 5, 5, player.shield)
-
+    draw_text(screen, 'kill ' + str(wavecounter),18, WIDTH / 2,25)
+    draw_text(screen, 'wave ' + str(wave), 18, WIDTH / 2, 40)
     # Draw lives
     draw_lives(screen, WIDTH - 100, 5, player.lives, player_mini_img)
 
