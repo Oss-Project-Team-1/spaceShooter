@@ -659,7 +659,7 @@ while running:
 #폭탄과 몬스터가 충돌 시 코드
     b_hits = pygame.sprite.groupcollide(mobs, bombs, True, True)
     for hit in b_hits:
-        score += 50 - hit.radius  # give different scores for hitting big and small metoers
+        score += 100 - hit.radius  # give different scores for hitting big and small metoers
         random.choice(expl_sounds).play()
         # m = Mob()
         # all_sprites.add(m)
@@ -674,6 +674,7 @@ while running:
 
     ## check if the player collides with the mob
     # gives back a list, True makes the mob element disappear
+    # 몬스터와 플레이어가 부딛혔을 시 코드
     hits = pygame.sprite.spritecollide(
         player, mobs, True, pygame.sprite.collide_circle)
     for hit in hits:
@@ -707,7 +708,6 @@ while running:
             player.lives += 1
             if player.lives >= 3:
                 player.lives = 3
-
     ## if player died and the explosion has finished, end game
     if player.lives == 0 and not death_explosion.alive():
         running = False
@@ -720,8 +720,10 @@ while running:
     screen.blit(background, background_rect)
 
     all_sprites.draw(screen)
-    # 10px down from the screen
-    draw_text(screen, str(score), 18, WIDTH / 2, 10)
+    # 15px down from the screen
+    draw_text(screen, 'score: ' + str(score), 20, WIDTH / 10, 15)
+    draw_text(screen, 'wave: ' + str(score), 20, WIDTH / 10, 35)
+    draw_text(screen, 'bullet: ' + str(score), 20, WIDTH / 10, 55)
     draw_shield_bar(screen, 5, 5, player.shield)
 
     # Draw lives
