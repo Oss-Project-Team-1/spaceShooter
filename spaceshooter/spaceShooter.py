@@ -190,6 +190,7 @@ class Player(pygame.sprite.Sprite):
         self.power = 1
 #       self.power_timer = pygame.time.get_ticks()
         self.power_count = 30
+        self.power_count_text = "∞"
         self.bomb_count = 1
 
     def update(self):
@@ -323,6 +324,7 @@ class Player(pygame.sprite.Sprite):
                 bullet = Bullet(self.rect.centerx, self.rect.top)
                 all_sprites.add(bullet)
                 bullets.add(bullet)
+                self.power_count_text = "∞"
                 shooting_sound.play()
             if self.power == 2:
                 bullet1 = Bullet(self.rect.left, self.rect.centery)
@@ -331,6 +333,7 @@ class Player(pygame.sprite.Sprite):
                 all_sprites.add(bullet2)
                 bullets.add(bullet1)
                 bullets.add(bullet2)
+                self.power_count_text = str(self.power_count)
                 shooting_sound.play()
                 self.power_count -= 1  # 파워 2이상일때 총알 카운트
 
@@ -346,6 +349,7 @@ class Player(pygame.sprite.Sprite):
                 bullets.add(bullet1)
                 bullets.add(bullet2)
                 bullets.add(missile1)
+                self.power_count_text = str(self.power_count)
                 shooting_sound.play()
                 missile_sound.play()
                 self.power_count -= 1  # 파워 2이상일때 총알 카운트
@@ -512,7 +516,7 @@ def setbackground(wave):
         background = pygame.image.load(path.join(img_dir, starfield[3])).convert()
     return background
 
-background = pygame.image.load(path.join(img_dir, 'starfield.png')).convert()
+background = pygame.image.load(path.join(img_dir, 'starfield1.png')).convert()
 background_rect = background.get_rect()
 ## ^^ draw this rect first
 
@@ -761,8 +765,7 @@ while running:
     all_sprites.draw(screen)
     # 15px down from the screen
     draw_text(screen, 'score: ' + str(score), 20, WIDTH / 10, 15)
-    draw_text(screen, 'wave: ' + str(score), 20, WIDTH / 10, 35)
-    draw_text(screen, 'bullet: ' + str(score), 20, WIDTH / 10, 55)
+    draw_text(screen, 'bullet: ' + str(player.power_count_text), 20, WIDTH / 10, 35)
     draw_shield_bar(screen, 5, 5, player.shield)
     draw_text(screen, 'kill ' + str(wavecounter),18, WIDTH / 2,25)
     draw_text(screen, 'wave ' + str(wave), 18, WIDTH / 2, 40)
