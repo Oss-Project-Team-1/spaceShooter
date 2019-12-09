@@ -133,10 +133,33 @@ def draw_lives(surf, x, y, lives, img):
 
 
 
-def newmob():
-    mob_element = Mob()
-    all_sprites.add(mob_element)
-    mobs.add(mob_element)
+def newmob(wave):
+    if wave == 1:
+        mob_element = Mob()
+        all_sprites.add(mob_element)
+        mobs.add(mob_element)
+        
+    elif wave == 2:
+        Mob.image_orig = random.choice(ghost_images)
+        mob_element = Mob()
+        mob_element.mobchange()        
+        all_sprites.add(mob_element)
+        mobs.add(mob_element)
+        
+    elif wave == 3:
+        Mob.image_orig = random.choice(cockpit_images)
+        mob_element = Mob()
+        mob_element.mobchange2()
+        all_sprites.add(mob_element)
+        mobs.add(mob_element)
+        
+    elif wave == 4:
+        Mob.image_orig = random.choice(cockpit2_images)
+        mob_element = Mob()
+        mob_element.mobchange3()        
+        all_sprites.add(mob_element)
+        mobs.add(mob_element)        
+
 
 class Explosion(pygame.sprite.Sprite):
     def __init__(self, center, size):
@@ -376,8 +399,39 @@ class Mob(pygame.sprite.Sprite):
             self.rect = self.image.get_rect()
             self.rect.center = old_center
 
+    #wave2 몹 change
+    def mobchange(self):
+        self.image_orig = random.choice(ghost_images)
+        self.image_orig.set_colorkey(BLACK)
+        self.image = self.image_orig.copy()
+        self.rect = self.image.get_rect()
+        self.radius = int(self.rect.width *.90 / 2)
+        self.rect.x = random.randrange(0, WIDTH - self.rect.width)
+        self.rect.y = random.randrange(-150, -100)
+        self.speedy = random.randrange(5, 20)        
+    #wave3 몹 cahnge
+    def mobchange2(self):
+        self.image_orig = random.choice(cockpit_images)
+        self.image_orig.set_colorkey(BLACK)
+        self.image = self.image_orig.copy()
+        self.rect = self.image.get_rect()
+        self.radius = int(self.rect.width *.90 / 2)
+        self.rect.x = random.randrange(0, WIDTH - self.rect.width)
+        self.rect.y = random.randrange(-150, -100)
+        self.speedy = random.randrange(5, 20)
+    #wave4 몹 change
+    def mobchange3(self):
+        self.image_orig = random.choice(cockpit2_images)
+        self.image_orig.set_colorkey(BLACK)
+        self.image = self.image_orig.copy()
+        self.rect = self.image.get_rect()
+        self.radius = int(self.rect.width *.90 / 2)
+        self.rect.x = random.randrange(0, WIDTH - self.rect.width)
+        self.rect.y = random.randrange(-150, -100)
+        self.speedy = random.randrange(5, 20)        
     def update(self):
-        self.rotate()
+        if self.image_orig == random.choice(meteor_images):
+            self.rotate()
         self.rect.x += self.speedx
         self.rect.y += self.speedy
         ## now what if the mob element goes out of the screen
@@ -505,6 +559,59 @@ meteor_list = [
 for image in meteor_list:
     meteor_images.append(pygame.image.load(path.join(img_dir, image)).convert())
 
+#외계인 이미지 추가 wave2 몹
+ghost_images = []
+ghost_list = [
+    'ghost1.png',
+    'ghost1b.png',
+    'ghost2.png',
+    'ghost2b.png',
+    'ghost3.png',
+    'ghost3b.png',
+    'ghost4.png',
+    'ghost4b.png'
+]
+for image in ghost_list:
+    ghost_images.append(pygame.image.load(path.join(img_dir, image)).convert())
+
+#우주선 이미지 추가 wave3 몹
+cockpit_images = []
+cockpit_list = [
+    'cockpit1Green.png',
+    'cockpit2Green.png',
+    'cockpit3Green.png',
+    'cockpit1Grey.png',
+    'cockpit2Grey.png',
+    'cockpit3Grey.png',
+    'cockpit1Red.png',
+    'cockpit2Red.png',
+    'cockpit3Red.png',
+    'cockpit1Yellow.png',
+    'cockpit2Yellow.png',
+    'cockpit3Yellow.png'   
+]
+for image in cockpit_list:
+    cockpit_images.append(pygame.image.load(path.join(img_dir, image)).convert())
+
+#우주선2 이미지 추가 wave4 몹
+cockpit2_images = []
+cockpit2_list = [
+    'cockpit4Green.png',
+    'cockpit5Green.png',
+    'sampleShip1.png',
+    'cockpit4Grey.png',
+    'cockpit5Grey.png',
+    'sampleShip2.png',
+    'cockpit4Red.png',
+    'cockpit5Red.png',
+    'sampleShip3.png',
+    'cockpit4Yellow.png',
+    'cockpit5Yellow.png'
+]
+for image in cockpit2_list:
+    cockpit2_images.append(pygame.image.load(path.join(img_dir, image)).convert())
+
+
 ## meteor explosion
 explosion_anim = {}
 explosion_anim['lg'] = []
@@ -591,7 +698,7 @@ while running:
             # mob_element = Mob()
             # all_sprites.add(mob_element)
             # mobs.add(mob_element)
-            newmob()
+            newmob(wave)
 
         ## group for bullets
         bullets = pygame.sprite.Group()
@@ -643,7 +750,7 @@ while running:
             pow = Pow(hit.rect.center)
             all_sprites.add(pow)
             powerups.add(pow)
-        newmob()        ## spawn a new mob
+        newmob(wave)        ## spawn a new mob
 
     ## ^^ the above loop will create the amount of mob objects which were killed spawn again
     #########################
@@ -667,7 +774,7 @@ while running:
             pow = Pow(hit.rect.center)
             all_sprites.add(pow)
             powerups.add(pow)
-        newmob()    
+        newmob(wave)    
 
     ## check if the player collides with the mob
     hits = pygame.sprite.spritecollide(player, mobs, True, pygame.sprite.collide_circle)        ## gives back a list, True makes the mob element disappear
@@ -675,7 +782,7 @@ while running:
         player.shield -= hit.radius * 2
         expl = Explosion(hit.rect.center, 'sm')
         all_sprites.add(expl)
-        newmob()
+        newmob(wave)
         if player.shield <= 0: 
             player_die_sound.play()
             death_explosion = Explosion(player.rect.center, 'player')
