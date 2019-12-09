@@ -18,6 +18,12 @@
 from __future__ import division
 import pygame
 import random
+import time
+import os
+import sqlite3
+
+main_dir = os.path.split(os.path.abspath(__file__))[0]
+data_dir = os.path.join(main_dir, 'data')
 from os import path
 
 ## assets folder
@@ -73,24 +79,181 @@ def main_menu():
 
     title = pygame.image.load(path.join(img_dir, "main.png")).convert()
     title = pygame.transform.scale(title, (WIDTH, HEIGHT), screen)
+<<<<<<< HEAD
+    score_background = pygame.image.load(path.join(img_dir, "starfield1.png")).convert()
+        
+    showHiScores = False
+=======
 
     screen.blit(title, (0,0))
+>>>>>>> ae114910de84b02d82daef2e7c26834eb18fe6bd
     pygame.display.update()
+    font = pygame.font.Font(None, 36)
+
+    hiScores = Database.getScores()
+    highScoreTexts = [
+                        font.render("NAME", 1, WHITE),
+                        font.render("SCORE", 1, WHITE)
+                        ]
+    highScorePos = [highScoreTexts[0].get_rect(
+                    topleft=screen.get_rect().inflate(-100, -100).topleft),
+                    highScoreTexts[1].get_rect(
+                    topright=screen.get_rect().inflate(-100, -100).topright)]
+    for hs in hiScores:
+        highScoreTexts.extend([font.render(str(hs[x]), 1, BLUE)
+                                for x in range(2)])
+        highScorePos.extend([highScoreTexts[x].get_rect(
+            topleft=highScorePos[x].bottomleft) for x in range(-2, 0)])
 
     while True:
+        pygame.display.update()
         ev = pygame.event.poll()
         if ev.type == pygame.KEYDOWN:
+            showHiScores = False
             if ev.key == pygame.K_RETURN:
-                break
+                #pygame.mixer.music.stop()
+                ready = pygame.mixer.Sound(path.join(sound_folder, 'getready.ogg'))
+                ready.play()
+                screen.fill(BLACK)
+                draw_text(screen, "GET READY!", 40, WIDTH/2, HEIGHT/2)
+                pygame.display.update()
+                break;
             elif ev.key == pygame.K_q:
                 pygame.quit()
                 quit()
+            # 스코어 추가
+            elif ev.key == pygame.K_s: 
+                showHiScores = True
+            elif ev.key == pygame.K_ESCAPE and showHiScores == True:
+                showHiScores = False
+                screen.blit(title, (0, 0))
         elif ev.type == pygame.QUIT:
                 pygame.quit()
+<<<<<<< HEAD
+                quit()
+
+        if showHiScores:
+            screen.blit(score_background, (0, 0))
+            textOverlays = zip(highScoreTexts, highScorePos)
+            for txt, pos in textOverlays:
+                screen.blit(txt, pos)
+=======
                 quit() 
+>>>>>>> ae114910de84b02d82daef2e7c26834eb18fe6bd
         else:
+            # TODO: 이상하게 스코어를 조회하고 다시 돌아오면 화면이 안돌아온다...
+            
             draw_text(screen, "Press [ENTER] To Begin", 30, WIDTH/2, HEIGHT/2)
             draw_text(screen, "or [Q] To Quit", 30, WIDTH/2, (HEIGHT/2)+40)
+<<<<<<< HEAD
+            draw_text(screen, "or [S] To Score", 30, WIDTH/2, (HEIGHT/2)+80)
+        pygame.display.flip()
+
+class Keyboard(object):
+    keys = {pygame.K_a: 'A', pygame.K_b: 'B', pygame.K_c: 'C', pygame.K_d: 'D',
+            pygame.K_e: 'E', pygame.K_f: 'F', pygame.K_g: 'G', pygame.K_h: 'H',
+            pygame.K_i: 'I', pygame.K_j: 'J', pygame.K_k: 'K', pygame.K_l: 'L',
+            pygame.K_m: 'M', pygame.K_n: 'N', pygame.K_o: 'O', pygame.K_p: 'P',
+            pygame.K_q: 'Q', pygame.K_r: 'R', pygame.K_s: 'S', pygame.K_t: 'T',
+            pygame.K_u: 'U', pygame.K_v: 'V', pygame.K_w: 'W', pygame.K_x: 'X',
+            pygame.K_y: 'Y', pygame.K_z: 'Z'}
+
+def scoreBorder(highScore):
+    print(1)
+    font = pygame.font.Font(None, 36)
+    hiScores = Database.getScores()
+    isHiScore = len(hiScores) < Database.numScores or score > hiScores[-1][1]
+    name = ''
+    nameBuffer = []
+    
+    score_background = pygame.image.load(path.join(img_dir, "starfield1.png")).convert()
+    while True:
+
+    # Event Handling
+        for event in pygame.event.get():
+            if (event.type == pygame.QUIT
+                or not isHiScore
+                and event.type == pygame.KEYDOWN
+                    and event.key == pygame.K_ESCAPE):
+                return False
+            elif (event.type == pygame.KEYDOWN
+                  and event.key == pygame.K_RETURN
+                  and not isHiScore):
+                return True
+            elif (event.type == pygame.KEYDOWN
+                  and event.key in Keyboard.keys.keys()
+                  and len(nameBuffer) < 8):
+                nameBuffer.append(Keyboard.keys[event.key])
+                name = ''.join(nameBuffer)
+            elif (event.type == pygame.KEYDOWN
+                  and event.key == pygame.K_BACKSPACE
+                  and len(nameBuffer) > 0):
+                nameBuffer.pop()
+                name = ''.join(nameBuffer)
+            elif (event.type == pygame.KEYDOWN
+                  and event.key == pygame.K_RETURN
+                  and len(name) > 0):
+                Database.setScore(hiScores, (name, score))
+                return True
+
+        if isHiScore:
+            hiScoreText = font.render('HIGH SCORE!', 1, RED)
+            hiScorePos = hiScoreText.get_rect(
+                midbottom=screen.get_rect().center)
+            scoreText = font.render(str(score), 1, BLUE)
+            scorePos = scoreText.get_rect(midtop=hiScorePos.midbottom)
+            enterNameText = font.render('ENTER YOUR NAME:', 1, RED)
+            enterNamePos = enterNameText.get_rect(midtop=scorePos.midbottom)
+            nameText = font.render(name, 1, BLUE)
+            namePos = nameText.get_rect(midtop=enterNamePos.midbottom)
+            textOverlay = zip([hiScoreText, scoreText,
+                               enterNameText, nameText],
+                              [hiScorePos, scorePos,
+                               enterNamePos, namePos])
+        else:
+            print(5)
+            gameOverText = font.render('GAME OVER', 1, BLUE)
+            gameOverPos = gameOverText.get_rect(
+                center=screen.get_rect().center)
+            scoreText = font.render('SCORE: {}'.format(score), 1, BLUE)
+            scorePos = scoreText.get_rect(midtop=gameOverPos.midbottom)
+            textOverlay = zip([gameOverText, scoreText],
+                              [gameOverPos, scorePos])
+    
+    # Update and draw all sprites
+        print(4)
+        screen.blit(score_background, (0, 0))
+        for txt, pos in textOverlay:
+            screen.blit(txt, pos)
+        pygame.display.flip()
+
+# 점수 저장하는 db 클래스
+class Database(object):
+    path = os.path.join(data_dir, 'score.db')
+    numScores = 15
+
+    @staticmethod
+    def getScores():
+        conn = sqlite3.connect(Database.path)
+        c = conn.cursor()
+        c.execute('''CREATE TABLE if not exists scores (name text, score integer)''')
+        c.execute("SELECT * FROM scores ORDER BY score DESC")
+        hiScores = c.fetchall()
+        conn.close()
+        return hiScores
+
+    @staticmethod
+    def setScore(hiScores, entry):
+        conn = sqlite3.connect(Database.path)
+        c = conn.cursor()
+        if len(hiScores) == Database.numScores:
+            lowScoreName = hiScores[-1][0]
+            lowScore = hiScores[-1][1]
+            c.execute("DELETE FROM scores WHERE (name = ? AND score = ?)", (lowScoreName, lowScore))
+        c.execute("INSERT INTO scores VALUES (?,?)", entry)
+        conn.commit()
+        conn.close()
+=======
             pygame.display.update()
 
     #pygame.mixer.music.stop()
@@ -100,6 +263,7 @@ def main_menu():
     draw_text(screen, "GET READY!", 40, WIDTH/2, HEIGHT/2)
     pygame.display.update()
     
+>>>>>>> ae114910de84b02d82daef2e7c26834eb18fe6bd
 
 def draw_text(surf, text, size, x, y):
     ## selecting a cross platform font to display the score
@@ -205,8 +369,9 @@ class Player(pygame.sprite.Sprite):
         self.hidden = False
         self.hide_timer = pygame.time.get_ticks()
         self.power = 1
- #       self.power_timer = pygame.time.get_ticks()
+        self.invincibility = 2000   # 무적시간 2초
         self.power_count = 30
+        self.power_count_text = "∞"
         self.bomb_count = 1
 
     def update(self):
@@ -229,8 +394,26 @@ class Player(pygame.sprite.Sprite):
         self.speedy = 0
 
         ## will give back a list of the keys which happen to be pressed down at that moment
+<<<<<<< HEAD
+        keystate = pygame.key.get_pressed()
+        ## 대각선으로 이동 가능하게 하는 기능
+        if (keystate[pygame.K_UP] and keystate[pygame.K_RIGHT]):
+            self.speedx = 5
+            self.speedy = -5
+        elif (keystate[pygame.K_UP] and keystate[pygame.K_LEFT]):
+            self.speedx = -5
+            self.speedy = -5
+        elif (keystate[pygame.K_DOWN] and keystate[pygame.K_RIGHT]):
+            self.speedx = 5
+            self.speedy = +5
+        elif (keystate[pygame.K_DOWN] and keystate[pygame.K_LEFT]):
+            self.speedx = -5
+            self.speedy = +5
+        elif keystate[pygame.K_LEFT]:
+=======
         keystate = pygame.key.get_pressed()     
         if keystate[pygame.K_LEFT]:
+>>>>>>> ae114910de84b02d82daef2e7c26834eb18fe6bd
             self.speedx = -5
         elif keystate[pygame.K_RIGHT]:
             self.speedx = 5
@@ -327,6 +510,7 @@ class Player(pygame.sprite.Sprite):
                 bullet = Bullet(self.rect.centerx, self.rect.top)
                 all_sprites.add(bullet)
                 bullets.add(bullet)
+                self.power_count_text = "∞"
                 shooting_sound.play()
             if self.power == 2:
                 bullet1 = Bullet(self.rect.left, self.rect.centery)
@@ -335,6 +519,7 @@ class Player(pygame.sprite.Sprite):
                 all_sprites.add(bullet2)
                 bullets.add(bullet1)
                 bullets.add(bullet2)
+                self.power_count_text = str(self.power_count)
                 shooting_sound.play()
                 self.power_count -= 1 #파워 2이상일때 총알 카운트
 
@@ -349,6 +534,7 @@ class Player(pygame.sprite.Sprite):
                 bullets.add(bullet1)
                 bullets.add(bullet2)
                 bullets.add(missile1)
+                self.power_count_text = str(self.power_count)
                 shooting_sound.play()
                 missile_sound.play()
                 self.power_count -= 1 #파워 2이상일때 총알 카운트
@@ -359,6 +545,7 @@ class Player(pygame.sprite.Sprite):
         self.power_count = 30
 
     def hide(self):
+        """죽었을 때"""
         self.hidden = True
         self.hide_timer = pygame.time.get_ticks()
         self.rect.center = (WIDTH / 2, HEIGHT + 200)
@@ -536,7 +723,11 @@ def setbackground(wave):
         background = pygame.image.load(path.join(img_dir, starfield[3])).convert()
     return background
 
+<<<<<<< HEAD
+## ^^ draw this rect first
+=======
 ## ^^ draw this rect first 
+>>>>>>> ae114910de84b02d82daef2e7c26834eb18fe6bd
 
 player_img = pygame.image.load(path.join(img_dir, 'playerShip1_orange.png')).convert()
 player_mini_img = pygame.transform.scale(player_img, (25, 19))
@@ -739,7 +930,7 @@ while running:
         if wavecounter %200 <=10:
             background = setbackground(wave)
             background_rect = setbackground(wave).get_rect() 
-        score += 50 - hit.radius         ## give different scores for hitting big and small metoers
+        score += 100 - hit.radius         ## give different scores for hitting big and small metoers
         random.choice(expl_sounds).play()
         # m = Mob()
         # all_sprites.add(m)
@@ -763,7 +954,7 @@ while running:
         if wavecounter %200 <=10:
             background = setbackground(wave)
             background_rect = setbackground(wave).get_rect() 
-        score += 50 - hit.radius         ## give different scores for hitting big and small metoers
+        score += 100 - hit.radius         ## give different scores for hitting big and small metoers
         random.choice(expl_sounds).play()
         # m = Mob()
         # all_sprites.add(m)
@@ -777,7 +968,14 @@ while running:
         newmob(wave)    
 
     ## check if the player collides with the mob
+<<<<<<< HEAD
+    # gives back a list, True makes the mob element disappear
+    # 몬스터와 플레이어가 부딛혔을 시 코드
+    hits = pygame.sprite.spritecollide(
+        player, mobs, True, pygame.sprite.collide_circle)
+=======
     hits = pygame.sprite.spritecollide(player, mobs, True, pygame.sprite.collide_circle)        ## gives back a list, True makes the mob element disappear
+>>>>>>> ae114910de84b02d82daef2e7c26834eb18fe6bd
     for hit in hits:
         player.shield -= hit.radius * 2
         expl = Explosion(hit.rect.center, 'sm')
@@ -809,10 +1007,14 @@ while running:
             player.lives += 1
             if player.lives >= 3:
                 player.lives = 3
+<<<<<<< HEAD
+=======
             
 
+>>>>>>> ae114910de84b02d82daef2e7c26834eb18fe6bd
     ## if player died and the explosion has finished, end game
     if player.lives == 0 and not death_explosion.alive():
+        scoreBorder(score)
         running = False
         # menu_display = True
         # pygame.display.update()
@@ -823,7 +1025,13 @@ while running:
     screen.blit(background, background_rect)
 
     all_sprites.draw(screen)
+<<<<<<< HEAD
+    # 15px down from the screen
+    draw_text(screen, 'score: ' + str(score), 20, WIDTH / 10, 15)
+    draw_text(screen, 'bullet: ' + str(player.power_count_text), 20, WIDTH / 10, 35)
+=======
     draw_text(screen, str(score), 18, WIDTH / 2, 10)     ## 10px down from the screen
+>>>>>>> ae114910de84b02d82daef2e7c26834eb18fe6bd
     draw_shield_bar(screen, 5, 5, player.shield)
     draw_text(screen, 'kill ' + str(wavecounter),18, WIDTH / 2,25)
     draw_text(screen, 'wave ' + str(wave), 18, WIDTH / 2, 40)
