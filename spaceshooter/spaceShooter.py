@@ -78,9 +78,7 @@ def main_menu():
     pygame.mixer.music.play(-1)
 
     title = pygame.image.load(path.join(img_dir, "main.png")).convert()
-    title = pygame.transform.scale(title, (WIDTH, HEIGHT), screen)
     score_background = pygame.image.load(path.join(img_dir, "starfield1.png")).convert()
-        
     showHiScores = False
     pygame.display.update()
     font = pygame.font.Font(None, 36)
@@ -101,30 +99,33 @@ def main_menu():
             topleft=highScorePos[x].bottomleft) for x in range(-2, 0)])
 
     while True:
+        
+        title = pygame.transform.scale(title, (WIDTH, HEIGHT), screen)
         pygame.display.update()
-        ev = pygame.event.poll()
-        if ev.type == pygame.KEYDOWN:
-            showHiScores = False
-            if ev.key == pygame.K_RETURN:
+        for event in pygame.event.get():
+            # if event.type == pygame.KEYDOWN:
+            # showHiScores = False
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                 #pygame.mixer.music.stop()
                 ready = pygame.mixer.Sound(path.join(sound_folder, 'getready.ogg'))
                 ready.play()
                 screen.fill(BLACK)
                 draw_text(screen, "GET READY!", 40, WIDTH/2, HEIGHT/2)
                 pygame.display.update()
-                break;
-            elif ev.key == pygame.K_q:
+                return
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_q:
                 pygame.quit()
                 quit()
             # 스코어 추가
-            elif ev.key == pygame.K_s: 
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_s: 
                 showHiScores = True
-            elif ev.key == pygame.K_ESCAPE and showHiScores == True:
+            elif (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE and showHiScores == True):
                 showHiScores = False
-                screen.blit(title, (0, 0))
-        elif ev.type == pygame.QUIT:
-                pygame.quit()
-                quit()
+                screen.fill((0,0,0))
+                continue
+            elif event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
 
         if showHiScores:
             screen.blit(score_background, (0, 0))
@@ -133,7 +134,7 @@ def main_menu():
                 screen.blit(txt, pos)
         else:
             # TODO: 이상하게 스코어를 조회하고 다시 돌아오면 화면이 안돌아온다...
-            
+            screen.blit(title, (0, 0))
             draw_text(screen, "Press [ENTER] To Begin", 30, WIDTH/2, HEIGHT/2)
             draw_text(screen, "or [Q] To Quit", 30, WIDTH/2, (HEIGHT/2)+40)
             draw_text(screen, "or [S] To Score", 30, WIDTH/2, (HEIGHT/2)+80)
@@ -149,7 +150,6 @@ class Keyboard(object):
             pygame.K_y: 'Y', pygame.K_z: 'Z'}
 
 def scoreBorder(highScore):
-    print(1)
     font = pygame.font.Font(None, 36)
     hiScores = Database.getScores()
     isHiScore = len(hiScores) < Database.numScores or score > hiScores[-1][1]
@@ -201,7 +201,6 @@ def scoreBorder(highScore):
                               [hiScorePos, scorePos,
                                enterNamePos, namePos])
         else:
-            print(5)
             gameOverText = font.render('GAME OVER', 1, BLUE)
             gameOverPos = gameOverText.get_rect(
                 center=screen.get_rect().center)
@@ -211,7 +210,6 @@ def scoreBorder(highScore):
                               [gameOverPos, scorePos])
     
     # Update and draw all sprites
-        print(4)
         screen.blit(score_background, (0, 0))
         for txt, pos in textOverlay:
             screen.blit(txt, pos)
@@ -980,7 +978,6 @@ while running:
     ## draw the stargaze.png image
     screen.blit(background, background_rect)
     all_sprites.draw(screen)
-    
     # 15px down from the screen
     draw_text(screen, 'score: ' + str(score), 18, WIDTH / 8, 15)
     draw_text(screen, 'bullet: ' + str(player.power_count_text), 18, WIDTH / 10, 35)
