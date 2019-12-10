@@ -77,8 +77,7 @@ def main_menu():
     menu_song = pygame.mixer.music.load(path.join(sound_folder, "menu.ogg"))
     pygame.mixer.music.play(-1)
 
-    title = pygame.image.load(path.join(img_dir, "main.png")).convert()
-    score_background = pygame.image.load(path.join(img_dir, "starfield1.png")).convert()
+        
     showHiScores = False
     pygame.display.update()
     font = pygame.font.Font(None, 36)
@@ -99,8 +98,9 @@ def main_menu():
             topleft=highScorePos[x].bottomleft) for x in range(-2, 0)])
 
     while True:
-        
+        title = pygame.image.load(path.join(img_dir, "main.png")).convert()
         title = pygame.transform.scale(title, (WIDTH, HEIGHT), screen)
+        score_background = pygame.image.load(path.join(img_dir, "starfield1.png")).convert()
         pygame.display.update()
         for event in pygame.event.get():
             # if event.type == pygame.KEYDOWN:
@@ -979,8 +979,8 @@ while running:
     screen.blit(background, background_rect)
     all_sprites.draw(screen)
     # 15px down from the screen
-    draw_text(screen, 'score: ' + str(score), 18, WIDTH / 8, 15)
-    draw_text(screen, 'bullet: ' + str(player.power_count_text), 18, WIDTH / 10, 35)
+    draw_text(screen, 'score: ' + str(score), 20, WIDTH / 10, 15)
+    draw_text(screen, 'bullet: ' + str(player.power_count_text), 20, WIDTH / 10, 35)
     draw_shield_bar(screen, 5, 5, player.shield)
     draw_text(screen, 'kill ' + str(wavecounter),18, WIDTH / 2,25)
     draw_text(screen, 'wave ' + str(wave), 18, WIDTH / 2, 40)
