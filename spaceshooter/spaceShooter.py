@@ -697,8 +697,11 @@ def setbackground(wave):
         background = pygame.image.load(path.join(img_dir, starfield[3])).convert()
     return background
 
+<<<<<<< HEAD
 ## ^^ draw this rect first
 
+=======
+>>>>>>> 62e204c7137c23ab768b2566db80ddcc000f8586
 player_img = pygame.image.load(path.join(img_dir, 'playerShip1_orange.png')).convert()
 player_mini_img = pygame.transform.scale(player_img, (25, 19))
 player_mini_img.set_colorkey(BLACK)
@@ -985,8 +988,11 @@ while running:
     screen.fill(BLACK)
     ## draw the stargaze.png image
     screen.blit(background, background_rect)
-
     all_sprites.draw(screen)
+<<<<<<< HEAD
+=======
+    
+>>>>>>> 62e204c7137c23ab768b2566db80ddcc000f8586
     # 15px down from the screen
     draw_text(screen, 'score: ' + str(score), 20, WIDTH / 10, 15)
     draw_text(screen, 'bullet: ' + str(player.power_count_text), 20, WIDTH / 10, 35)
