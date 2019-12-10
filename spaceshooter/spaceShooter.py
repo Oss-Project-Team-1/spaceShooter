@@ -79,14 +79,9 @@ def main_menu():
 
     title = pygame.image.load(path.join(img_dir, "main.png")).convert()
     title = pygame.transform.scale(title, (WIDTH, HEIGHT), screen)
-<<<<<<< HEAD
     score_background = pygame.image.load(path.join(img_dir, "starfield1.png")).convert()
         
     showHiScores = False
-=======
-
-    screen.blit(title, (0,0))
->>>>>>> ae114910de84b02d82daef2e7c26834eb18fe6bd
     pygame.display.update()
     font = pygame.font.Font(None, 36)
 
@@ -129,7 +124,6 @@ def main_menu():
                 screen.blit(title, (0, 0))
         elif ev.type == pygame.QUIT:
                 pygame.quit()
-<<<<<<< HEAD
                 quit()
 
         if showHiScores:
@@ -137,15 +131,11 @@ def main_menu():
             textOverlays = zip(highScoreTexts, highScorePos)
             for txt, pos in textOverlays:
                 screen.blit(txt, pos)
-=======
-                quit() 
->>>>>>> ae114910de84b02d82daef2e7c26834eb18fe6bd
         else:
             # TODO: 이상하게 스코어를 조회하고 다시 돌아오면 화면이 안돌아온다...
             
             draw_text(screen, "Press [ENTER] To Begin", 30, WIDTH/2, HEIGHT/2)
             draw_text(screen, "or [Q] To Quit", 30, WIDTH/2, (HEIGHT/2)+40)
-<<<<<<< HEAD
             draw_text(screen, "or [S] To Score", 30, WIDTH/2, (HEIGHT/2)+80)
         pygame.display.flip()
 
@@ -253,17 +243,6 @@ class Database(object):
         c.execute("INSERT INTO scores VALUES (?,?)", entry)
         conn.commit()
         conn.close()
-=======
-            pygame.display.update()
-
-    #pygame.mixer.music.stop()
-    ready = pygame.mixer.Sound(path.join(sound_folder,'getready.ogg'))
-    ready.play()
-    screen.fill(BLACK)
-    draw_text(screen, "GET READY!", 40, WIDTH/2, HEIGHT/2)
-    pygame.display.update()
-    
->>>>>>> ae114910de84b02d82daef2e7c26834eb18fe6bd
 
 def draw_text(surf, text, size, x, y):
     ## selecting a cross platform font to display the score
@@ -394,7 +373,6 @@ class Player(pygame.sprite.Sprite):
         self.speedy = 0
 
         ## will give back a list of the keys which happen to be pressed down at that moment
-<<<<<<< HEAD
         keystate = pygame.key.get_pressed()
         ## 대각선으로 이동 가능하게 하는 기능
         if (keystate[pygame.K_UP] and keystate[pygame.K_RIGHT]):
@@ -410,10 +388,6 @@ class Player(pygame.sprite.Sprite):
             self.speedx = -5
             self.speedy = +5
         elif keystate[pygame.K_LEFT]:
-=======
-        keystate = pygame.key.get_pressed()     
-        if keystate[pygame.K_LEFT]:
->>>>>>> ae114910de84b02d82daef2e7c26834eb18fe6bd
             self.speedx = -5
         elif keystate[pygame.K_RIGHT]:
             self.speedx = 5
@@ -723,9 +697,6 @@ def setbackground(wave):
         background = pygame.image.load(path.join(img_dir, starfield[3])).convert()
     return background
 
-
-## ^^ draw this rect first
-
 player_img = pygame.image.load(path.join(img_dir, 'playerShip1_orange.png')).convert()
 player_mini_img = pygame.transform.scale(player_img, (25, 19))
 player_mini_img.set_colorkey(BLACK)
@@ -751,13 +722,9 @@ for image in meteor_list:
 ghost_images = []
 ghost_list = [
     'ghost1.png',
-    'ghost1b.png',
     'ghost2.png',
-    'ghost2b.png',
     'ghost3.png',
-    'ghost3b.png',
-    'ghost4.png',
-    'ghost4b.png'
+    'ghost4.png'
 ]
 for image in ghost_list:
     ghost_images.append(pygame.image.load(path.join(img_dir, image)).convert())
@@ -965,7 +932,6 @@ while running:
         newmob(wave)    
 
     ## check if the player collides with the mob
-        
     # gives back a list, True makes the mob element disappear
     # 몬스터와 플레이어가 부딛혔을 시 코드
     hits = pygame.sprite.spritecollide(
@@ -1001,8 +967,7 @@ while running:
             player.lives += 1
             if player.lives >= 3:
                 player.lives = 3
-
-
+                
     ## if player died and the explosion has finished, end game
     if player.lives == 0 and not death_explosion.alive():
         scoreBorder(score)
@@ -1014,12 +979,11 @@ while running:
     screen.fill(BLACK)
     ## draw the stargaze.png image
     screen.blit(background, background_rect)
-
     all_sprites.draw(screen)
-
+    
     # 15px down from the screen
-    draw_text(screen, 'score: ' + str(score), 20, WIDTH / 10, 15)
-    draw_text(screen, 'bullet: ' + str(player.power_count_text), 20, WIDTH / 10, 35)
+    draw_text(screen, 'score: ' + str(score), 18, WIDTH / 8, 15)
+    draw_text(screen, 'bullet: ' + str(player.power_count_text), 18, WIDTH / 10, 35)
     draw_shield_bar(screen, 5, 5, player.shield)
     draw_text(screen, 'kill ' + str(wavecounter),18, WIDTH / 2,25)
     draw_text(screen, 'wave ' + str(wave), 18, WIDTH / 2, 40)
