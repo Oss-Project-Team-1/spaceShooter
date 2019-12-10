@@ -187,12 +187,12 @@ def scoreBorder(highScore):
                 return True
 
         if isHiScore:
-            hiScoreText = font.render('HIGH SCORE!', 1, RED)
+            hiScoreText = font.render('NEW HIGH SCORE', 1, WHITE)
             hiScorePos = hiScoreText.get_rect(
                 midbottom=screen.get_rect().center)
-            scoreText = font.render(str(score), 1, BLUE)
+            scoreText = font.render(str(score), 1, GREEN)
             scorePos = scoreText.get_rect(midtop=hiScorePos.midbottom)
-            enterNameText = font.render('ENTER YOUR NAME:', 1, RED)
+            enterNameText = font.render('LEAVE YOUR LOG:', 1, WHITE)
             enterNamePos = enterNameText.get_rect(midtop=scorePos.midbottom)
             nameText = font.render(name, 1, BLUE)
             namePos = nameText.get_rect(midtop=enterNamePos.midbottom)
@@ -201,10 +201,10 @@ def scoreBorder(highScore):
                               [hiScorePos, scorePos,
                                enterNamePos, namePos])
         else:
-            gameOverText = font.render('GAME OVER', 1, BLUE)
+            gameOverText = font.render('GAME OVER', 1, GREEN)
             gameOverPos = gameOverText.get_rect(
                 center=screen.get_rect().center)
-            scoreText = font.render('SCORE: {}'.format(score), 1, BLUE)
+            scoreText = font.render('SCORE: {}'.format(score), 1, GREEN)
             scorePos = scoreText.get_rect(midtop=gameOverPos.midbottom)
             textOverlay = zip([gameOverText, scoreText],
                               [gameOverPos, scorePos])
@@ -969,8 +969,9 @@ while running:
     ## if player died and the explosion has finished, end game
     if player.lives == 0 and not death_explosion.alive():
         scoreBorder(score)
-        running = False
-        # menu_display = True
+        menu_display = True
+        continue
+        # running = False
         # pygame.display.update()
 
     #3 Draw/render
